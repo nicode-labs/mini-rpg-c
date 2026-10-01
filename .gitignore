@@ -1,0 +1,5 @@
+rpg
+test
+*.o
+.DS_Store
+.vscode/
