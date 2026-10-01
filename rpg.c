@@ -11,6 +11,13 @@
 #include <stdlib.h>
 #include "color.h"
 
+struct Hero
+{
+    char nom[20];
+    int pv;
+    int attaque;
+};
+
 int main()
 {
     int choix;
@@ -28,6 +35,13 @@ int main()
         {
         case 1:
             printf(L_GREEN "Le jeu va commencer\n" L_WHITE);
+            struct Hero HeroPrincipal;
+            printf(HOME L_BLUE "Comment se nomme le Hero: ");
+            scanf("%s", HeroPrincipal.nom);
+            printf(HOME L_RED "Nom : %s\n" L_WHITE, HeroPrincipal.nom);
+            HeroPrincipal.pv = 100;
+            HeroPrincipal.attaque = 5;
+            printf(L_GREEN "Caractéristiques :\n" L_WHITE "%d dégats\nVitalité : %d\n" L_WHITE, HeroPrincipal.attaque, HeroPrincipal.pv);
             break;
         case 2:
             printf(L_CYAN "Voici les règles du jeu :\n");
