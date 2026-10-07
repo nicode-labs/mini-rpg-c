@@ -20,6 +20,28 @@ struct Personnage // Ce struct est la base de chaque personnage du jeu
     int pv;
     int attaque;
 };
+// Les fonctions que j'utilise dans le code
+void afficherMenu()
+{
+    printf(L_GREEN "\n\n===MINI RPG===\n" L_WHITE);
+    printf("1.Nouvelle partie\n");
+    printf("2.Les règles du jeu\n");
+    printf("3.Quitter le jeu\n");
+    printf("Ton choix:");
+}
+void afficherfiche(struct Personnage perso)
+{
+    printf(L_WHITE "\nLe personnage se nomme : %s" L_GREEN "\nCaractéristiques :" L_CYAN "\nVitalité :%d" L_MAGENTA "\nAttaque :%d" L_BLUE "\nClasse : %s", perso.nom, perso.pv, perso.attaque, perso.classe);
+}
+void attaquer(struct Personnage *attaquant, struct Personnage *defenseur)
+{
+    int degats;  // Définit la variable dégat pour les combats qui sera aléatoire avec rand
+    degats = rand() % attaquant->attaque + 1; // rand renvoie un nombre très grand, donc on met un modulo et le +1 pour que l'attaque soit comprise entre 1 et les dégats max du personnage
+    defenseur->pv -= degats;
+    printf(L_RED "\n\n%s frappe %s ! -%dPV" L_WHITE, attaquant->nom, defenseur->nom, degats);
+}
+////////////////////////////////////////////////////////////////////////
+
 int main()
 {
     int choix;           // Variable pour le choix du menue
@@ -28,11 +50,7 @@ int main()
 
     do // boucle du menu principal
     {
-        printf(L_GREEN "\n\n===MINI RPG===\n" L_WHITE);
-        printf("1.Nouvelle partie\n");
-        printf("2.Les règles du jeu\n");
-        printf("3.Quitter le jeu\n");
-        printf("Ton choix:");
+        afficherMenu();
 
         scanf("%d", &choix);
         switch (choix) // Définit les plusieurs effets du choix du menu principal
@@ -72,45 +90,48 @@ int main()
                 }
             } while (choix_de_classe < 1 || choix_de_classe > 3); // Fin de la boucle choix
 
-            printf(HOME L_RED "Nom : %s\n" L_WHITE, HeroPrincipal.nom);
-            printf("Classe : %s\n", HeroPrincipal.classe);
-            printf(L_GREEN "Caractéristiques :\n" L_WHITE "%d dégats\nVitalité : %d\n" L_WHITE, HeroPrincipal.attaque, HeroPrincipal.pv);
+            afficherfiche(HeroPrincipal);
             struct Personnage PremierMonstre = {"Grok", "Gobelin", 60, 3}; // Définit le premier monstre
-            
 
             printf("\n\nUn %s sauvage apparait !!!", PremierMonstre.nom);
             printf(L_RED "\n\nVoici %s le %s !\n" L_WHITE, PremierMonstre.nom, PremierMonstre.classe);
-            printf(L_MAGENTA "Caractéristiques :\n" L_WHITE "%d dégats\nVitalité : %d\n", PremierMonstre.attaque, PremierMonstre.pv);
-            int degats;                                   // Définit la variable dégat pour les combats qui sera aléatoire avec rand
-            degats = rand() % PremierMonstre.attaque + 1; // rand renvoie un nombre très grand, donc on met un modulo et le +1 pour que l'attaque soit comprise entre 1 et les dégats max du personnage
-            
+            afficherfiche(PremierMonstre);
 
-            printf(L_GREEN "\n\n%s Frappe %s avec ses griffes !"
-                           "\n-%dpv",
-                   PremierMonstre.nom, HeroPrincipal.nom, degats);
-            HeroPrincipal.pv -= degats;
-            printf("\n%s a encore %dPV", HeroPrincipal.nom, HeroPrincipal.pv);
-            
+            while (HeroPrincipal.pv > 0 && PremierMonstre.pv > 0)
+            {
+                attaquer(&PremierMonstre, &HeroPrincipal);
+                if (HeroPrincipal.pv > 0)
+                {
+                    printf("\n%s a encore %dPV", HeroPrincipal.nom, HeroPrincipal.pv);
+                }
+                else if (HeroPrincipal.pv <= 0)
+                {
+                    printf(L_RED "\n%s a pris un violent coup et ne pourra pas s'en remettre.." L_WHITE, HeroPrincipal.nom);
+                }
 
-            degats = rand() % HeroPrincipal.attaque + 1;
-            printf(L_CYAN "\n\n%s contre attaque et frappe %s !"
-                          "\n-%dpv",
-                   HeroPrincipal.nom, PremierMonstre.nom, degats);
-            PremierMonstre.pv -= degats;
-            printf("\n%s a encore %dPV", PremierMonstre.nom, PremierMonstre.pv);
-
-            if(HeroPrincipal.pv <= 0){
-                printf(L_RED"\nGAME OVER !!! :("L_WHITE);
+                if (HeroPrincipal.pv > 0)
+                {
+                    attaquer(&HeroPrincipal, &PremierMonstre);
+                    if (PremierMonstre.pv > 0)
+                    {
+                        printf("\n%s a encore %dPV", PremierMonstre.nom, PremierMonstre.pv);
+                    }
+                    else if (PremierMonstre.pv <= 0)
+                    {
+                        printf(L_RED "\n%s va mourir.." L_WHITE, PremierMonstre.nom);
+                    }
+                }
             }
-            else if(PremierMonstre.pv <= 0){
-                printf(L_GREEN"\nVictoire !!! :)"L_WHITE);
+            if (HeroPrincipal.pv <= 0)
+            {
+                printf(L_RED "\nGAME OVER !!! :(" L_WHITE);
             }
-            else{
-                printf(L_MAGENTA"\n%s est encore debout !"L_WHITE, PremierMonstre.nom);
+            else if (PremierMonstre.pv <= 0)
+            {
+                printf(L_GREEN "\nVictoire !!! :)" L_WHITE);
             }
 
             break;
-
 
         case 2: // case pour le deuxième menu des règles du jeu
             printf(L_CYAN "Voici les règles du jeu :\n");
