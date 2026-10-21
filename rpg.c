@@ -19,6 +19,7 @@ struct Personnage // Ce struct est la base de chaque personnage du jeu
     char classe[20];
     int pv;
     int attaque;
+    int pvMax;
 };
 // Les fonctions que j'utilise dans le code
 void afficherMenu()
@@ -35,10 +36,25 @@ void afficherfiche(struct Personnage perso)
 }
 void attaquer(struct Personnage *attaquant, struct Personnage *defenseur)
 {
-    int degats;  // Définit la variable dégat pour les combats qui sera aléatoire avec rand
+    int degats;                               // Définit la variable dégat pour les combats qui sera aléatoire avec rand
     degats = rand() % attaquant->attaque + 1; // rand renvoie un nombre très grand, donc on met un modulo et le +1 pour que l'attaque soit comprise entre 1 et les dégats max du personnage
     defenseur->pv -= degats;
     printf(L_RED "\n\n%s frappe %s ! -%dPV" L_WHITE, attaquant->nom, defenseur->nom, degats);
+}
+void soigner(struct Personnage *soignant)
+{
+    int soins;
+    soins = rand() % 10 + 5;
+    soignant->pv += soins;
+    if (soignant->pv > soignant->pvMax)
+    {
+        soignant->pv = soignant->pvMax;
+        printf(L_GREEN "\n\n%s récupère toute sa vie !" L_WHITE, soignant->nom);
+    }
+    else
+    {
+        printf(L_GREEN "\n\n%s se soigne de %dPV" L_WHITE, soignant->nom, soins);
+    }
 }
 ////////////////////////////////////////////////////////////////////////
 
@@ -71,18 +87,21 @@ int main()
                     strcpy(HeroPrincipal.classe, "Chevalier");
                     HeroPrincipal.pv = 120;
                     HeroPrincipal.attaque = 4;
+                    HeroPrincipal.pvMax = 120;
                     break;
 
                 case 2: // L'archer tank et frappe de manière modéré
                     strcpy(HeroPrincipal.classe, "Archer");
                     HeroPrincipal.pv = 95;
                     HeroPrincipal.attaque = 5;
+                    HeroPrincipal.pvMax = 95;
                     break;
 
                 case 3: // Le voleur ne tank pas beaucoup mais frappe fort
                     strcpy(HeroPrincipal.classe, "Voleur");
                     HeroPrincipal.pv = 80;
                     HeroPrincipal.attaque = 7;
+                    HeroPrincipal.pvMax = 80;
                     break;
                 default:
                     printf(L_RED "Choix invalide\n" HOME L_WHITE);
@@ -91,13 +110,13 @@ int main()
             } while (choix_de_classe < 1 || choix_de_classe > 3); // Fin de la boucle choix
 
             afficherfiche(HeroPrincipal);
-            struct Personnage PremierMonstre = {"Grok", "Gobelin", 60, 3}; // Définit le premier monstre
+            struct Personnage PremierMonstre = {"Grok", "Gobelin", 60, 3, 60}; // Définit le premier monstre
 
             printf("\n\nUn %s sauvage apparait !!!", PremierMonstre.nom);
             printf(L_RED "\n\nVoici %s le %s !\n" L_WHITE, PremierMonstre.nom, PremierMonstre.classe);
             afficherfiche(PremierMonstre);
-
-            while (HeroPrincipal.pv > 0 && PremierMonstre.pv > 0)
+            int fuite = 0;
+            while (HeroPrincipal.pv > 0 && PremierMonstre.pv > 0 && fuite !=1)
             {
                 attaquer(&PremierMonstre, &HeroPrincipal);
                 if (HeroPrincipal.pv > 0)
@@ -110,9 +129,35 @@ int main()
                 }
 
                 if (HeroPrincipal.pv > 0)
-                {
-                    attaquer(&HeroPrincipal, &PremierMonstre);
-                    if (PremierMonstre.pv > 0)
+                {   
+                    int action;
+                    printf(L_BLUE"\n\n Que fais-tu ?" 
+                                 "\n\n 1.Attaquer  2.Soigner  3.Fuir\n" L_WHITE);
+                    scanf("%d", &action);
+                    switch (action)
+                    {
+                    case 1:
+                        attaquer(&HeroPrincipal, &PremierMonstre);
+                        break;
+                    case 2: 
+                        soigner(&HeroPrincipal);
+                        break;
+                    case 3: 
+                        fuite = rand() % 2;
+                        if (fuite == 1)
+                        {
+                            printf(L_GREEN"\nLa fuite a réussi !"L_WHITE);
+                        }
+                        else 
+                        {
+                            printf(L_RED"\n%s te rattrape !"L_WHITE, PremierMonstre.nom);
+                        }
+                        break;
+                    default:
+                        printf(L_CYAN "\n\n Tu hésites et perds ton tour..."L_WHITE);
+                        break;
+                    }
+                    if (PremierMonstre.pv > 0 && fuite != 1)
                     {
                         printf("\n%s a encore %dPV", PremierMonstre.nom, PremierMonstre.pv);
                     }
@@ -129,6 +174,10 @@ int main()
             else if (PremierMonstre.pv <= 0)
             {
                 printf(L_GREEN "\nVictoire !!! :)" L_WHITE);
+            }
+            else if (fuite == 1)
+            {
+                printf("\nTu as pris la fuite !");
             }
 
             break;
