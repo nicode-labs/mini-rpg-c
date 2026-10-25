@@ -98,7 +98,41 @@ void boutique(struct Personnage *achat)
         }
     }
 }
-
+void sauvegarder(struct Personnage heros)
+{
+    FILE *fichier = fopen("sauvegarde.txt", "w");
+    fprintf(fichier, "%s\n", heros.nom);
+    fprintf(fichier, "%s\n", heros.classe);
+    fprintf(fichier, "%d\n", heros.pv);
+    fprintf(fichier, "%d\n", heros.attaque);
+    fprintf(fichier, "%d\n", heros.pvMax);
+    fprintf(fichier, "%d\n", heros.xp);
+    fprintf(fichier, "%d\n", heros.niveau);
+    fprintf(fichier, "%d\n", heros.orPossede);
+    fprintf(fichier, "%d\n", heros.potions);
+    fclose(fichier);
+}
+int charger(struct Personnage *heros)
+{
+    FILE *fichier = fopen("sauvegarde.txt", "r");   // "r" = read, lire
+    if (fichier == NULL)
+{
+    printf(L_RED "\nAucune sauvegarde trouvée !\n" L_WHITE);
+    return 0;
+}
+    fscanf(fichier, "%s", heros->nom);
+    fscanf(fichier, "%s\n", heros->classe);
+    fscanf(fichier, "%d\n", &heros->pv);
+    fscanf(fichier, "%d\n", &heros->attaque);
+    fscanf(fichier, "%d\n", &heros->pvMax);
+    fscanf(fichier, "%d\n", &heros->xp);
+    fscanf(fichier, "%d\n", &heros->niveau);
+    fscanf(fichier, "%d\n", &heros->orPossede);
+    fscanf(fichier, "%d\n", &heros->potions);
+    fclose(fichier);
+    return 1;
+    
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -127,7 +161,7 @@ int main()
             scanf("%s", HeroPrincipal.nom);
             do // Boucle du choix de la classe
             {
-                printf(L_BLUE "Quelle est ta classe ?\n 1:Chevalier\n 2:Archer\n 3:Voleur\n");
+                printf(L_BLUE "Quelle est ta classe ?\n 1:Chevalier\n 2:Archer\n 3:Voleur\n 4:Reprendre Sauvegarde\n");
                 printf("Ton choix:");
                 scanf("%d", &choix_de_classe);
                 switch (choix_de_classe) // Définit les plusieurs effets du choix des classes
@@ -164,11 +198,20 @@ int main()
                     HeroPrincipal.orPossede = 10;
                     HeroPrincipal.potions = 1;
                     break;
+                case 4:
+                    if (charger(&HeroPrincipal) == 0)
+                    {
+                        choix_de_classe = 0;
+                    }
+                    else{
+                        charger(&HeroPrincipal);
+                    }
+                    break;
                 default:
                     printf(L_RED "Choix invalide\n" HOME L_WHITE);
                     break;
                 }
-            } while (choix_de_classe < 1 || choix_de_classe > 3); // Fin de la boucle choix
+            } while (choix_de_classe < 1 || choix_de_classe > 4); // Fin de la boucle choix
 
             afficherfiche(HeroPrincipal);
             printf(L_GREEN"\nNotre Hero a %d or et %d potions."L_WHITE, HeroPrincipal.orPossede, HeroPrincipal.potions);
@@ -258,6 +301,7 @@ int main()
                     printf(L_CYAN"\nNotre Hero récupère %d or et les %d potions du monstre !"
                                   "\nTu possèdes donc %d or et %d potions"L_WHITE, PremierMonstre.orPossede, PremierMonstre.potions, HeroPrincipal.orPossede, HeroPrincipal.potions);
                     boutique(&HeroPrincipal);
+                    sauvegarder(HeroPrincipal);
                     printf(L_MAGENTA "\nQue veux tu faire ?\n 1.Combat suivant \n2.Retour au menu\n" L_WHITE);
                     scanf("%d", &continuer);
                 }

@@ -3,3 +3,4 @@ test
 *.o
 .DS_Store
 .vscode/
+sauvegarde.txt
