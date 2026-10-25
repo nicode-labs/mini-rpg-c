@@ -87,7 +87,12 @@ int main()
     int choix;           // Variable pour le choix du menue
     int choix_de_classe; // Variable pour le choix de la classe
     srand(time(NULL));   // Permet l'aléatoire pour les combats
-
+    struct Personnage bestiaire[4] = {
+        {"Grok", "Gobelin", 60, 3, 60, 50, 0},
+        {"Draco", "Dragon", 130, 12, 130, 200, 0},
+        {"Ursus", "Ours", 70, 4, 70, 130, 0},
+        {"Pétunia", "Fleur", 30, 1, 30, 40, 0},
+    };
     do // boucle du menu principal
     {
         afficherMenu();
@@ -144,7 +149,8 @@ int main()
             do
             {
                 continuer = 0;
-                struct Personnage PremierMonstre = {"Grok", "Gobelin", 60, 3, 60, 50, 0}; // Définit le premier monstre
+                int nombre = rand() % 4;
+                struct Personnage PremierMonstre = bestiaire[nombre]; // Définit le premier monstre
 
                 printf("\n\nUn %s sauvage apparait !!!", PremierMonstre.nom);
                 printf(L_RED "\n\nVoici %s le %s !\n" L_WHITE, PremierMonstre.nom, PremierMonstre.classe);
