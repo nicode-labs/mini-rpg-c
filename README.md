@@ -8,7 +8,7 @@ Je suis en première année de BTS CIEL. En cours de prog on refait surtout des 
 
 Donc je me suis lancé dans un petit RPG, et je l'améliore étape par étape. C'est pas toujours fluide, ça demande pas mal d'effort, mais je sens que j'avance et ça m'a donné envie de m'y intéresser encore plus.
 
-Le projet est en cours : j'en suis à 8 étapes sur les 10 que je me suis fixées.
+Les 10 étapes que je m'étais fixées sont terminées. Il me reste maintenant les finitions.
 
 ## Le jeu
 
@@ -37,6 +37,8 @@ Bon courage si tu tombes sur Draco au niveau 1.
 
 Quand tu gagnes, tu récupères de l'XP et de l'or. À 100 XP ton héros monte de niveau. Avec l'or, tu peux acheter des potions à la boutique (20 pièces la potion) juste après chaque victoire. Tu peux enchaîner les combats avec le même héros, mais tes PV ne remontent pas entre deux combats, donc il faut gérer.
 
+La partie est sauvegardée automatiquement après chaque victoire. Au lancement suivant, tu peux reprendre ton héros là où tu l'avais laissé.
+
 À quoi ressemble une partie :
 
 <img src="capture.png" alt="Début d'une partie : fiche du héros, apparition de Grok et menu d'action" width="450">
@@ -52,9 +54,20 @@ Il faut juste un compilateur C. Je code sur Mac, ça devrait marcher pareil sur 
 ```bash
 git clone https://github.com/nicode-labs/mini-rpg-c.git
 cd mini-rpg-c
-gcc rpg.c -o rpg -Wall
+gcc rpg.c combat.c sauvegarde.c personnage.c -o rpg -Wall
 ./rpg
 ```
+
+## Comment le code est rangé
+
+| Fichier | Ce qu'il contient |
+|---|---|
+| `personnage.h` | Le « sommaire » : la `struct Personnage` et la liste des fonctions |
+| `rpg.c` | Le `main` : les menus et la boucle de jeu |
+| `combat.c` | Attaquer et se soigner |
+| `personnage.c` | Fiche du héros, XP et niveaux, boutique, menu |
+| `sauvegarde.c` | Sauvegarder et charger la partie |
+| `color.h` | Les couleurs du terminal (fourni par mon prof) |
 
 ## Ce que j'ai appris
 
@@ -66,6 +79,8 @@ gcc rpg.c -o rpg -Wall
 6. **L'XP et les niveaux** : quand passer une struct par adresse ou par copie, et la portée des variables.
 7. **Le bestiaire** : un tableau de `struct`. Je copie le monstre tiré au hasard avant le combat, sinon il serait déjà mort au combat suivant.
 8. **L'or, la boutique et les potions** : au lieu d'écrire une deuxième fonction de soin pour la potion, j'ai donné la quantité de soin en paramètre à `soigner`. Une seule fonction, deux usages.
+9. **La sauvegarde** : écrire et lire un fichier avec `fopen`, `fprintf`, `fscanf` et `fclose`, vérifier que le fichier existe (`NULL`), et ma première fonction qui renvoie une valeur pour dire si le chargement a marché.
+10. **Le découpage en fichiers** : un fichier `.h` qui sert de sommaire, les `#include` à remettre dans chaque `.c` (chaque fichier est compilé tout seul), et la compilation de plusieurs fichiers d'un coup.
 
 Les bugs qui m'ont le plus appris :
 
@@ -76,6 +91,7 @@ Les bugs qui m'ont le plus appris :
 - Un warning que je comprenais pas du tout. En lançant le jeu j'ai vu que `%d` s'affichait tel quel : le `%` que j'avais tapé c'était pas le bon caractère. Depuis, quand je comprends pas un warning, je lance le programme et je regarde ce qu'il affiche.
 - Pétunia n'apparaissait jamais : avec `rand() % 3`, je ne pouvais tirer que les cases 0, 1 et 2, et elle était dans la case 3.
 - J'avais écrit `or =- 20` au lieu de `or -= 20`. Ça compile sans erreur, mais ça veut dire « l'or devient -20 ». Mon héros finissait endetté après chaque achat.
+- Sans fichier de sauvegarde, le jeu chargeait quand même un héros : 1 PV, une classe « ??k » et 125 680 pièces d'or. Je ne vérifiais pas que le fichier existait.
 - Et un faux bug : le jeu relançait une partie tout seul… parce que j'avais tapé 1 et Entrée plusieurs fois trop vite.
 
 ## La suite
@@ -88,12 +104,12 @@ Les bugs qui m'ont le plus appris :
 - [x] XP et niveaux
 - [x] Plusieurs types de monstres
 - [x] Or, boutique et potions
-- [ ] Sauvegarder sa partie
-- [ ] Découper le code en plusieurs fichiers
+- [x] Sauvegarder sa partie
+- [x] Découper le code en plusieurs fichiers
 
 Bugs que je connais et que je corrigerai : le nom du héros doit faire un seul mot, et si tu tapes une lettre au lieu d'un chiffre dans un menu, le jeu part en boucle.
 
-À la fin, je prévois aussi de rééquilibrer le jeu (surtout Draco) et d'ajouter un peu de visuel dans le terminal : des cadres et des barres de vie.
+À la fin, je prévois aussi de rééquilibrer le jeu (surtout Draco) et d'ajouter un peu de visuel dans le terminal : des cadres et des barres de vie. Et côté cyber : j'ai réussi à tricher en modifiant le fichier de sauvegarde à la main (je me suis mis niveau 4). J'aimerais le protéger, par exemple en vérifiant que les valeurs sont cohérentes.
 
 ## Comment je bosse
 
@@ -101,4 +117,4 @@ Le code, c'est moi qui l'écris, sur mon Mac avec VS Code et le terminal. Pour l
 
 ---
 
-Nico.G, étudiant en BTS CIEL au lycée Félix Le Dantec à Lannion, en reconversion vers l'informatique et la cybersécurité.
+Nico.G, étudiant en BTS CIEL à Lannion, en reconversion vers l'informatique et la cybersécurité.
