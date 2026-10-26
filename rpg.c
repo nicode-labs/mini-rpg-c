@@ -12,19 +12,8 @@
 #include "color.h"
 #include <time.h>
 #include <string.h>
+#include "personnage.h"
 
-struct Personnage // Ce struct est la base de chaque personnage du jeu
-{
-    char nom[20];
-    char classe[20];
-    int pv;
-    int attaque;
-    int pvMax;
-    int xp;
-    int niveau;
-    int orPossede;
-    int potions;
-};
 // Les fonctions que j'utilise dans le code
 void afficherMenu()
 {
@@ -34,106 +23,6 @@ void afficherMenu()
     printf("3.Quitter le jeu\n");
     printf("Ton choix:");
 }
-void afficherfiche(struct Personnage perso)
-{
-    printf(L_WHITE "\nLe personnage se nomme : %s" L_GREEN "\nCaractéristiques :" L_CYAN "\nVitalité :%d" L_MAGENTA "\nAttaque :%d" L_BLUE "\nClasse : %s" L_YELLOW "\nIl est de niveau %d et possède %d xp."L_WHITE, perso.nom, perso.pv, perso.attaque, perso.classe, perso.niveau, perso.xp);
-}
-void attaquer(struct Personnage *attaquant, struct Personnage *defenseur)
-{
-    int degats;
-    degats = attaquant->attaque + rand() % attaquant->attaque; // dégâts entre l’attaque et le double de l’attaque
-    defenseur->pv -= degats;
-    printf(L_RED "\n\n%s frappe %s ! -%dPV" L_WHITE, attaquant->nom, defenseur->nom, degats);
-}
-void soigner(struct Personnage *soignant, int soins)
-{
-    soignant->pv += soins;
-    if (soignant->pv > soignant->pvMax)
-    {
-        soignant->pv = soignant->pvMax;
-        printf(L_GREEN "\n\n%s récupère toute sa vie !" L_WHITE, soignant->nom);
-    }
-    else
-    {
-        printf(L_GREEN "\n\n%s se soigne de %dPV" L_WHITE, soignant->nom, soins);
-    }
-}
-void gagnerXp(struct Personnage *progression, struct Personnage butinXp)
-{
-    int xpgagnee;
-    xpgagnee = butinXp.xp;
-    progression->xp += xpgagnee;
-    if (progression->xp >= 100)
-    {
-        progression->niveau += 1;
-        progression->pvMax *= 1.2;
-        progression->pv = progression->pvMax;
-        progression->attaque += 2;
-        progression->xp -= 100;
-        printf(L_CYAN "\n%s gagne %dxp !" L_WHITE, progression->nom, xpgagnee);
-        printf(L_GREEN "\nNiveau supérieur !" L_WHITE);
-        afficherfiche(*progression);
-    }
-    else
-    {
-        printf(L_CYAN "\n%s gagne %dxp !" L_WHITE, progression->nom, xpgagnee);
-    }
-}
-void boutique(struct Personnage *achat)
-{
-    int choix;
-    printf(L_MAGENTA"\n1.Acheter potion (20or)   2.Continuer\n"L_WHITE);
-    scanf("%d", &choix);
-    if(choix == 1)
-    {
-        if(achat->orPossede >= 20)
-        {
-            achat->orPossede -= 20;
-            achat->potions += 1;
-            printf(L_GREEN"\n Tu donnes 20 pièces d'or et gagne 1 potion !"L_WHITE);
-        }
-        else 
-        {
-            printf(L_RED"\nTu n'as pas assez d'or.."L_WHITE);
-        }
-    }
-}
-void sauvegarder(struct Personnage heros)
-{
-    FILE *fichier = fopen("sauvegarde.txt", "w");
-    fprintf(fichier, "%s\n", heros.nom);
-    fprintf(fichier, "%s\n", heros.classe);
-    fprintf(fichier, "%d\n", heros.pv);
-    fprintf(fichier, "%d\n", heros.attaque);
-    fprintf(fichier, "%d\n", heros.pvMax);
-    fprintf(fichier, "%d\n", heros.xp);
-    fprintf(fichier, "%d\n", heros.niveau);
-    fprintf(fichier, "%d\n", heros.orPossede);
-    fprintf(fichier, "%d\n", heros.potions);
-    fclose(fichier);
-}
-int charger(struct Personnage *heros)
-{
-    FILE *fichier = fopen("sauvegarde.txt", "r");   // "r" = read, lire
-    if (fichier == NULL)
-{
-    printf(L_RED "\nAucune sauvegarde trouvée !\n" L_WHITE);
-    return 0;
-}
-    fscanf(fichier, "%s", heros->nom);
-    fscanf(fichier, "%s\n", heros->classe);
-    fscanf(fichier, "%d\n", &heros->pv);
-    fscanf(fichier, "%d\n", &heros->attaque);
-    fscanf(fichier, "%d\n", &heros->pvMax);
-    fscanf(fichier, "%d\n", &heros->xp);
-    fscanf(fichier, "%d\n", &heros->niveau);
-    fscanf(fichier, "%d\n", &heros->orPossede);
-    fscanf(fichier, "%d\n", &heros->potions);
-    fclose(fichier);
-    return 1;
-    
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
@@ -142,8 +31,8 @@ int main()
     int choix_de_classe; // Variable pour le choix de la classe
     srand(time(NULL));   // Permet l'aléatoire pour les combats
     struct Personnage bestiaire[4] = {
-        {"Grok", "Gobelin", 60, 3, 60, 50, 0 , 10, 0},
-        {"Draco", "Dragon", 130, 12, 130, 200, 0 , 20, 0},
+        {"Grok", "Gobelin", 60, 3, 60, 50, 0, 10, 0},
+        {"Draco", "Dragon", 130, 12, 130, 200, 0, 20, 0},
         {"Ursus", "Ours", 70, 4, 70, 130, 0, 15, 0},
         {"Pétunia", "Fleur", 30, 1, 30, 40, 0, 5, 0},
     };
@@ -203,7 +92,8 @@ int main()
                     {
                         choix_de_classe = 0;
                     }
-                    else{
+                    else
+                    {
                         charger(&HeroPrincipal);
                     }
                     break;
@@ -214,7 +104,7 @@ int main()
             } while (choix_de_classe < 1 || choix_de_classe > 4); // Fin de la boucle choix
 
             afficherfiche(HeroPrincipal);
-            printf(L_GREEN"\nNotre Hero a %d or et %d potions."L_WHITE, HeroPrincipal.orPossede, HeroPrincipal.potions);
+            printf(L_GREEN "\nNotre Hero a %d or et %d potions." L_WHITE, HeroPrincipal.orPossede, HeroPrincipal.potions);
             int continuer;
             do
             {
@@ -264,14 +154,14 @@ int main()
                             }
                             break;
                         case 4:
-                            if(HeroPrincipal.potions > 0)
+                            if (HeroPrincipal.potions > 0)
                             {
                                 HeroPrincipal.potions -= 1;
                                 soigner(&HeroPrincipal, 40);
                             }
                             else
                             {
-                                printf(L_RED"\nTu n'as pas de potion..."L_WHITE);
+                                printf(L_RED "\nTu n'as pas de potion..." L_WHITE);
                             }
                             break;
                         default:
@@ -298,8 +188,9 @@ int main()
                     HeroPrincipal.orPossede = PremierMonstre.orPossede + HeroPrincipal.orPossede;
                     HeroPrincipal.potions = PremierMonstre.potions + HeroPrincipal.potions;
                     gagnerXp(&HeroPrincipal, PremierMonstre);
-                    printf(L_CYAN"\nNotre Hero récupère %d or et les %d potions du monstre !"
-                                  "\nTu possèdes donc %d or et %d potions"L_WHITE, PremierMonstre.orPossede, PremierMonstre.potions, HeroPrincipal.orPossede, HeroPrincipal.potions);
+                    printf(L_CYAN "\nNotre Hero récupère %d or et les %d potions du monstre !"
+                                  "\nTu possèdes donc %d or et %d potions" L_WHITE,
+                           PremierMonstre.orPossede, PremierMonstre.potions, HeroPrincipal.orPossede, HeroPrincipal.potions);
                     boutique(&HeroPrincipal);
                     sauvegarder(HeroPrincipal);
                     printf(L_MAGENTA "\nQue veux tu faire ?\n 1.Combat suivant \n2.Retour au menu\n" L_WHITE);
@@ -332,4 +223,4 @@ int main()
     } while (choix != 3);
 
     return (0);
-}
+}   
