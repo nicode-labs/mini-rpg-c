@@ -14,7 +14,7 @@
 #include <string.h>
 #include "personnage.h"
 
-// Les fonctions que j'utilise dans le code
+// Les fonctions que j'utilise dans le codeé
 void afficherMenu()
 {
     printf(L_GREEN "\n\n===MINI RPG===\n" L_WHITE);
@@ -47,7 +47,9 @@ int main()
             printf(L_GREEN "Le jeu va commencer\n" L_WHITE);
             struct Personnage HeroPrincipal;
             printf(L_BLUE "Comment se nomme le Hero:\n");
-            scanf("%s", HeroPrincipal.nom);
+            while (getchar() != '\n');
+            fgets(HeroPrincipal.nom, 20, stdin);
+            HeroPrincipal.nom[strcspn(HeroPrincipal.nom, "\n")] = '\0';
             do // Boucle du choix de la classe
             {
                 printf(L_BLUE "Quelle est ta classe ?\n 1:Chevalier\n 2:Archer\n 3:Voleur\n 4:Reprendre Sauvegarde\n");

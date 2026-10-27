@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "color.h"
 #include "personnage.h"
+#include <string.h>
 
 void sauvegarder(struct Personnage heros)
 {
@@ -24,7 +25,8 @@ int charger(struct Personnage *heros)
     printf(L_RED "\nAucune sauvegarde trouvée !\n" L_WHITE);
     return 0;
 }
-    fscanf(fichier, "%s", heros->nom);
+    fgets(heros->nom, 20, fichier);
+    heros->nom[strcspn(heros->nom, "\n")] = '\0';
     fscanf(fichier, "%s\n", heros->classe);
     fscanf(fichier, "%d\n", &heros->pv);
     fscanf(fichier, "%d\n", &heros->attaque);
