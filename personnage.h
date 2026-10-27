@@ -22,7 +22,7 @@ void gagnerXp(struct Personnage *progression, struct Personnage butinXp);
 void boutique(struct Personnage *achat);
 void sauvegarder(struct Personnage heros);
 int charger(struct Personnage *heros);
-
+int lireChoix();
 
 
 #endif

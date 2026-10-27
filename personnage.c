@@ -33,7 +33,7 @@ void boutique(struct Personnage *achat)
 {
     int choix;
     printf(L_MAGENTA"\n1.Acheter potion (20or)   2.Continuer\n"L_WHITE);
-    scanf("%d", &choix);
+    choix = lireChoix();
     if(choix == 1)
     {
         if(achat->orPossede >= 20)
@@ -47,4 +47,16 @@ void boutique(struct Personnage *achat)
             printf(L_RED"\nTu n'as pas assez d'or.."L_WHITE);
         }
     }
+}
+int lireChoix()
+{
+    int nombre;
+
+    if (scanf("%d", &nombre) != 1)
+    {
+        while (getchar() != '\n');
+        printf("Tape un chiffre, pas une lettre !\n");
+        return -1;
+    }
+    return nombre; 
 }

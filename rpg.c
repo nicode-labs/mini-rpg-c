@@ -40,7 +40,7 @@ int main()
     {
         afficherMenu();
 
-        scanf("%d", &choix);
+        choix = lireChoix();
         switch (choix) // Définit les plusieurs effets du choix du menu principal
         {
         case 1:
@@ -54,7 +54,7 @@ int main()
             {
                 printf(L_BLUE "Quelle est ta classe ?\n 1:Chevalier\n 2:Archer\n 3:Voleur\n 4:Reprendre Sauvegarde\n");
                 printf("Ton choix:");
-                scanf("%d", &choix_de_classe);
+                choix_de_classe = lireChoix();
                 switch (choix_de_classe) // Définit les plusieurs effets du choix des classes
                 {
                 case 1: // Le chevalier tank beaucoup mais ne frappe pas fort
@@ -94,10 +94,6 @@ int main()
                     {
                         choix_de_classe = 0;
                     }
-                    else
-                    {
-                        charger(&HeroPrincipal);
-                    }
                     break;
                 default:
                     printf(L_RED "Choix invalide\n" HOME L_WHITE);
@@ -132,10 +128,15 @@ int main()
 
                     if (HeroPrincipal.pv > 0)
                     {
-                        int action;
-                        printf(L_BLUE "\n\n Que fais-tu ?"
-                                      "\n\n 1.Attaquer  2.Soigner  3.Fuir 4.Potion\n" L_WHITE);
-                        scanf("%d", &action);
+                        int action; 
+                        printf(L_BLUE   "\n\n Que fais-tu ?"
+                                        "\n\n 1.Attaquer  2.Soigner  3.Fuir 4.Potion\n" L_WHITE);
+                        action = lireChoix();
+                        while (action < 1 || action > 4)
+                        {
+                            printf("Choisis 1 ou 2 ou 3 ou 4 !\n");
+                            action = lireChoix();
+                        }
                         switch (action)
                         {
                         case 1:
@@ -196,7 +197,12 @@ int main()
                     boutique(&HeroPrincipal);
                     sauvegarder(HeroPrincipal);
                     printf(L_MAGENTA "\nQue veux tu faire ?\n 1.Combat suivant \n2.Retour au menu\n" L_WHITE);
-                    scanf("%d", &continuer);
+                    continuer = lireChoix();
+                    while (continuer < 1 || continuer > 2)
+                    {
+                        printf("Choisis 1 ou 2 !\n");
+                        continuer = lireChoix();
+                    }
                 }
                 else if (fuite == 1)
                 {
