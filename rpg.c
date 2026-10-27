@@ -5,7 +5,7 @@
 3. Quitter le jeu */
 
 // Pour compiler le code, utilisez la commande suivante :
-// gcc rpg.c -o rpg -Wall
+ // gcc rpg.c combat.c sauvegarde.c personnage.c -o rpg -Wall
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <string.h>
 #include "personnage.h"
 
-// Les fonctions que j'utilise dans le codeé
+// Les fonctions que j'utilise dans le code
 void afficherMenu()
 {
     printf(L_GREEN "\n\n===MINI RPG===\n" L_WHITE);
@@ -110,7 +110,7 @@ int main()
                 int nombre = rand() % 4;
                 struct Personnage PremierMonstre = bestiaire[nombre]; // Définit le premier monstre
 
-                printf("\n\nUn %s sauvage apparait !!!", PremierMonstre.nom);
+                printf("\n\n%s apparaît !!!", PremierMonstre.nom);
                 printf(L_RED "\n\nVoici %s le %s !\n" L_WHITE, PremierMonstre.nom, PremierMonstre.classe);
                 afficherfiche(PremierMonstre);
                 int fuite = 0;
@@ -188,12 +188,20 @@ int main()
                 else if (PremierMonstre.pv <= 0)
                 {
                     printf(L_GREEN "\nVictoire !!! :)" L_WHITE);
-                    HeroPrincipal.orPossede = PremierMonstre.orPossede + HeroPrincipal.orPossede;
-                    HeroPrincipal.potions = PremierMonstre.potions + HeroPrincipal.potions;
+                    HeroPrincipal.orPossede += PremierMonstre.orPossede;
+                    HeroPrincipal.potions += PremierMonstre.potions;
                     gagnerXp(&HeroPrincipal, PremierMonstre);
-                    printf(L_CYAN "\nNotre Hero récupère %d or et les %d potions du monstre !"
+                    if(PremierMonstre.potions == 0){
+                        printf(L_CYAN "\nNotre Hero récupère %d or !"
                                   "\nTu possèdes donc %d or et %d potions" L_WHITE,
-                           PremierMonstre.orPossede, PremierMonstre.potions, HeroPrincipal.orPossede, HeroPrincipal.potions);
+                                PremierMonstre.orPossede, HeroPrincipal.orPossede, HeroPrincipal.potions);
+                    }
+                    else {
+                            printf(L_CYAN "\nNotre Hero récupère %d or et les %d potions du monstre !"
+                                  "\nTu possèdes donc %d or et %d potions" L_WHITE,
+                                PremierMonstre.orPossede, PremierMonstre.potions, HeroPrincipal.orPossede, HeroPrincipal.potions);
+                    }
+                 
                     boutique(&HeroPrincipal);
                     sauvegarder(HeroPrincipal);
                     printf(L_MAGENTA "\nQue veux tu faire ?\n 1.Combat suivant \n2.Retour au menu\n" L_WHITE);
@@ -214,13 +222,13 @@ int main()
         case 2: // case pour le deuxième menu des règles du jeu
             printf(L_CYAN "Voici les règles du jeu :\n");
             printf("- Tu incarnes un heros qui affronte des monstres au tour par tour.\n");
-            printf("- A chaque tour, tu choisis : attaquer, te soigner ou fuir.\n");
+            printf("- A chaque tour, tu choisis : attaquer, te soigner, fuir ou utiliser une potion.\n");
             printf("- Le monstre riposte apres chacune de tes actions.\n");
             printf("- Si les PV du monstre tombent a 0, tu gagnes de l'XP.\n");
             printf("- Assez d'XP = tu montes de niveau et deviens plus fort.\n");
             printf("- Si tes PV tombent a 0... Game Over !\n" L_WHITE);
             break;
-        case 3: // cas  e pour le menu pour quitter le jeu
+        case 3: // case pour le menu pour quitter le jeu
             printf(L_WHITE "A bientôt\n");
             break;
         default: // pour les choix du menu invalide
