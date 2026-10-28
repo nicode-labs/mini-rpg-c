@@ -23,6 +23,7 @@ void boutique(struct Personnage *achat);
 void sauvegarder(struct Personnage heros);
 int charger(struct Personnage *heros);
 int lireChoix();
+void attendre(int secondes);
 
 
 #endif

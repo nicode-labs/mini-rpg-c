@@ -13,6 +13,7 @@
 #include <time.h>
 #include <string.h>
 #include "personnage.h"
+#include <unistd.h>
 
 // Les fonctions que j'utilise dans le code
 void afficherMenu()
@@ -22,6 +23,22 @@ void afficherMenu()
     printf("2.Les règles du jeu\n");
     printf("3.Quitter le jeu\n");
     printf("Ton choix:");
+}
+void attendre(int secondes)
+{
+    fflush(stdout);
+    sleep(secondes);
+}
+void ecrire(char texte[])
+{
+    int i = 0;
+    while (texte[i] != '\0')
+    {
+        printf("%c", texte[i]);
+        fflush(stdout);
+        usleep(30000);
+        i++;
+    }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,12 +61,12 @@ int main()
         switch (choix) // Définit les plusieurs effets du choix du menu principal
         {
         case 1:
-            printf(L_GREEN "Le jeu va commencer\n" L_WHITE);
+            ecrire(L_GREEN "Le jeu va commencer\n" L_WHITE);
             struct Personnage HeroPrincipal;
 
             do // Boucle du choix de la classe
             {
-                printf(L_BLUE "Quelle est ta classe ?\n 1:Chevalier\n 2:Archer\n 3:Voleur\n 4:Reprendre Sauvegarde\n");
+                ecrire(L_BLUE "Quelle est ta classe ?\n 1:Chevalier\n 2:Archer\n 3:Voleur\n 4:Reprendre Sauvegarde\n");
                 printf("Ton choix:");
                 choix_de_classe = lireChoix();
                 switch (choix_de_classe) // Définit les plusieurs effets du choix des classes
@@ -111,19 +128,24 @@ int main()
             }
 
             afficherfiche(HeroPrincipal);
+            attendre(2);
             printf(L_GREEN "\nNotre Hero a %d or et %d potions." L_WHITE, HeroPrincipal.orPossede, HeroPrincipal.potions);
             int continuer;
             continuer = 0;
             int nombre = rand() % 4;
             struct Personnage PremierMonstre = bestiaire[nombre]; // Définit le premier monstre
+            attendre(3);
 
             printf("\n\n%s apparaît !!!", PremierMonstre.nom);
+            attendre(1);
             printf(L_RED "\n\nVoici %s le %s !\n" L_WHITE, PremierMonstre.nom, PremierMonstre.classe);
             afficherfiche(PremierMonstre);
+            attendre(3);
             int fuite = 0;
-            while (HeroPrincipal.pv > 0 && PremierMonstre.pv > 0 && fuite != 1)
+            while (HeroPrincipal.pv > 0 && PremierMonstre.pv > 0 && fuite != 1) //boucle comnat
             {
                 attaquer(&PremierMonstre, &HeroPrincipal);
+                attendre(1);
                 if (HeroPrincipal.pv > 0)
                 {
                     printf("\n%s a encore %dPV", HeroPrincipal.nom, HeroPrincipal.pv);
