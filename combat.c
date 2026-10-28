@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "color.h"
 #include "personnage.h"
+#include "unistd.h"
 
 void attaquer(struct Personnage *attaquant, struct Personnage *defenseur)
 {
@@ -9,6 +10,7 @@ void attaquer(struct Personnage *attaquant, struct Personnage *defenseur)
     degats = attaquant->attaque + rand() % attaquant->attaque; // dégâts entre l’attaque et le double de l’attaque
     defenseur->pv -= degats;
     printf(L_RED "\n\n%s frappe %s ! -%dPV" L_WHITE, attaquant->nom, defenseur->nom, degats);
+    sleep(1);
 }
 void soigner(struct Personnage *soignant, int soins)
 {

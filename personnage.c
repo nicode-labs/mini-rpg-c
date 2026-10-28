@@ -2,16 +2,33 @@
 #include <stdlib.h>
 #include "color.h"
 #include "personnage.h"
+#include <unistd.h>
 
+
+void ecrire(char texte[])
+{
+    int i = 0;
+    while (texte[i] != '\0')
+    {
+        printf("%c", texte[i]);
+        fflush(stdout);
+        usleep(30000);
+        i++;
+    }
+}
 void afficherfiche(struct Personnage perso)
 {
     if (perso.niveau == 0)
     {
-        printf(L_WHITE "\nLe personnage se nomme : %s" L_GREEN "\nCaractéristiques :" L_CYAN "\nVitalité :%d" L_MAGENTA "\nAttaque :%d" L_BLUE "\nClasse : %s" L_YELLOW "\n Si tu le bat, tu gagneras %d xp." L_WHITE, perso.nom, perso.pv, perso.attaque, perso.classe, perso.xp);
+        char fiche[500];
+        snprintf(fiche, 500, L_WHITE "\nLe personnage se nomme : %s" L_GREEN "\nCaractéristiques" L_CYAN "\nVitalité : %d" L_MAGENTA "\nAttaque : %d" L_BLUE "\nClasse : %s" L_YELLOW "\nSi tu le bat, tu gagneras" L_BLUE" %d xp." L_WHITE, perso.nom, perso.pv, perso.attaque, perso.classe, perso.xp);
+        ecrire(fiche);
     }
     else
     {
-        printf(L_WHITE "\nLe personnage se nomme : %s" L_GREEN "\nCaractéristiques :" L_CYAN "\nVitalité :%d" L_MAGENTA "\nAttaque :%d" L_BLUE "\nClasse : %s" L_YELLOW "\nIl est de niveau %d et possède %d xp." L_WHITE, perso.nom, perso.pv, perso.attaque, perso.classe, perso.niveau, perso.xp);
+        char fiche[500];
+        snprintf(fiche, 500, L_WHITE "\nLe personnage se nomme : %s" L_GREEN "\nCaractéristiques" L_CYAN "\nVitalité : %d" L_MAGENTA "\nAttaque : %d" L_BLUE "\nClasse : %s" L_YELLOW "\nIl est de"L_BLUE " niveau %d"L_YELLOW " et possède "L_BLUE"%d xp." L_WHITE, perso.nom, perso.pv, perso.attaque, perso.classe, perso.niveau, perso.xp);
+        ecrire(fiche);
     }
 }
 

@@ -24,6 +24,7 @@ void sauvegarder(struct Personnage heros);
 int charger(struct Personnage *heros);
 int lireChoix();
 void attendre(int secondes);
+void ecrire(char texte[]);
 
 
 #endif
