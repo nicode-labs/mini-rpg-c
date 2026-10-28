@@ -5,7 +5,7 @@
 3. Quitter le jeu */
 
 // Pour compiler le code, utilisez la commande suivante :
- // gcc rpg.c combat.c sauvegarde.c personnage.c -o rpg -Wall
+// gcc rpg.c combat.c sauvegarde.c personnage.c -o rpg -Wall
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,10 +46,7 @@ int main()
         case 1:
             printf(L_GREEN "Le jeu va commencer\n" L_WHITE);
             struct Personnage HeroPrincipal;
-            printf(L_BLUE "Comment se nomme le Hero:\n");
-            while (getchar() != '\n');
-            fgets(HeroPrincipal.nom, 20, stdin);
-            HeroPrincipal.nom[strcspn(HeroPrincipal.nom, "\n")] = '\0';
+
             do // Boucle du choix de la classe
             {
                 printf(L_BLUE "Quelle est ta classe ?\n 1:Chevalier\n 2:Archer\n 3:Voleur\n 4:Reprendre Sauvegarde\n");
@@ -100,37 +97,50 @@ int main()
                     break;
                 }
             } while (choix_de_classe < 1 || choix_de_classe > 4); // Fin de la boucle choix
+            if (choix_de_classe == 4)
+            {
+                printf(L_GREEN "\n Bon retour %s" L_WHITE, HeroPrincipal.nom);
+            }
+            else
+            {
+                printf(L_BLUE "Comment se nomme le Hero:\n");
+                while (getchar() != '\n')
+                    ;
+                fgets(HeroPrincipal.nom, 20, stdin);
+                HeroPrincipal.nom[strcspn(HeroPrincipal.nom, "\n")] = '\0';
+            }
 
             afficherfiche(HeroPrincipal);
             printf(L_GREEN "\nNotre Hero a %d or et %d potions." L_WHITE, HeroPrincipal.orPossede, HeroPrincipal.potions);
             int continuer;
-            do
+            continuer = 0;
+            int nombre = rand() % 4;
+            struct Personnage PremierMonstre = bestiaire[nombre]; // Définit le premier monstre
+
+            printf("\n\n%s apparaît !!!", PremierMonstre.nom);
+            printf(L_RED "\n\nVoici %s le %s !\n" L_WHITE, PremierMonstre.nom, PremierMonstre.classe);
+            afficherfiche(PremierMonstre);
+            int fuite = 0;
+            while (HeroPrincipal.pv > 0 && PremierMonstre.pv > 0 && fuite != 1)
             {
-                continuer = 0;
-                int nombre = rand() % 4;
-                struct Personnage PremierMonstre = bestiaire[nombre]; // Définit le premier monstre
-
-                printf("\n\n%s apparaît !!!", PremierMonstre.nom);
-                printf(L_RED "\n\nVoici %s le %s !\n" L_WHITE, PremierMonstre.nom, PremierMonstre.classe);
-                afficherfiche(PremierMonstre);
-                int fuite = 0;
-                while (HeroPrincipal.pv > 0 && PremierMonstre.pv > 0 && fuite != 1)
+                attaquer(&PremierMonstre, &HeroPrincipal);
+                if (HeroPrincipal.pv > 0)
                 {
-                    attaquer(&PremierMonstre, &HeroPrincipal);
-                    if (HeroPrincipal.pv > 0)
-                    {
-                        printf("\n%s a encore %dPV", HeroPrincipal.nom, HeroPrincipal.pv);
-                    }
-                    else if (HeroPrincipal.pv <= 0)
-                    {
-                        printf(L_RED "\n%s a pris un violent coup et ne pourra pas s'en remettre.." L_WHITE, HeroPrincipal.nom);
-                    }
+                    printf("\n%s a encore %dPV", HeroPrincipal.nom, HeroPrincipal.pv);
+                }
+                else if (HeroPrincipal.pv <= 0)
+                {
+                    printf(L_RED "\n%s a pris un violent coup et ne pourra pas s'en remettre.." L_WHITE, HeroPrincipal.nom);
+                }
 
-                    if (HeroPrincipal.pv > 0)
+                if (HeroPrincipal.pv > 0)
+                {
+                    int action;
+                    int rechoisir;
+                    do
                     {
-                        int action; 
-                        printf(L_BLUE   "\n\n Que fais-tu ?"
-                                        "\n\n 1.Attaquer  2.Soigner  3.Fuir 4.Potion\n" L_WHITE);
+                        printf(L_BLUE "\n\n Que fais-tu ?"
+                                      "\n\n 1.Attaquer  2.Soigner  3.Fuir 4.Potion\n" L_WHITE);
                         action = lireChoix();
                         while (action < 1 || action > 4)
                         {
@@ -159,8 +169,34 @@ int main()
                         case 4:
                             if (HeroPrincipal.potions > 0)
                             {
-                                HeroPrincipal.potions -= 1;
-                                soigner(&HeroPrincipal, 40);
+                                if (HeroPrincipal.pv > (HeroPrincipal.pvMax * 80) / 100)
+                                {
+                                    int choix_potion;
+                                    printf(L_YELLOW "\nTu dois avoir peur pour utiliser une potion avec toute cette vie" L_WHITE);
+                                    printf(L_MAGENTA "\nTu es sûr ? \n1.Utiliser une potion \n2.Etre raisonnable\n" L_WHITE);
+                                    choix_potion = lireChoix();
+                                    while (choix_potion < 1 || choix_potion > 2)
+                                    {
+                                        printf("Choisis 1 ou 2 !\n");
+                                        choix_potion = lireChoix();
+                                    }
+                                    switch (choix_potion)
+                                    {
+                                    case 1:
+                                        HeroPrincipal.potions -= 1;
+                                        soigner(&HeroPrincipal, 40);
+                                        break;
+                                    case 2:
+                                        printf(L_GREEN "\nTu ranges ta potion." L_WHITE);
+                                        rechoisir = 1;
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    HeroPrincipal.potions -= 1;
+                                    soigner(&HeroPrincipal, 40);
+                                }
                             }
                             else
                             {
@@ -171,14 +207,14 @@ int main()
                             printf(L_CYAN "\n\n Tu hésites et perds ton tour..." L_WHITE);
                             break;
                         }
-                        if (PremierMonstre.pv > 0 && fuite != 1)
-                        {
-                            printf("\n%s a encore %dPV", PremierMonstre.nom, PremierMonstre.pv);
-                        }
-                        else if (PremierMonstre.pv <= 0)
-                        {
-                            printf(L_RED "\n%s va mourir.." L_WHITE, PremierMonstre.nom);
-                        }
+                    } while (rechoisir == 1);
+                    if (PremierMonstre.pv > 0 && fuite != 1)
+                    {
+                        printf("\n%s a encore %dPV", PremierMonstre.nom, PremierMonstre.pv);
+                    }
+                    else if (PremierMonstre.pv <= 0)
+                    {
+                        printf(L_RED "\n%s va mourir.." L_WHITE, PremierMonstre.nom);
                     }
                 }
                 if (HeroPrincipal.pv <= 0)
@@ -191,17 +227,19 @@ int main()
                     HeroPrincipal.orPossede += PremierMonstre.orPossede;
                     HeroPrincipal.potions += PremierMonstre.potions;
                     gagnerXp(&HeroPrincipal, PremierMonstre);
-                    if(PremierMonstre.potions == 0){
+                    if (PremierMonstre.potions == 0)
+                    {
                         printf(L_CYAN "\nNotre Hero récupère %d or !"
-                                  "\nTu possèdes donc %d or et %d potions" L_WHITE,
-                                PremierMonstre.orPossede, HeroPrincipal.orPossede, HeroPrincipal.potions);
+                                      "\nTu possèdes donc %d or et %d potions" L_WHITE,
+                               PremierMonstre.orPossede, HeroPrincipal.orPossede, HeroPrincipal.potions);
                     }
-                    else {
-                            printf(L_CYAN "\nNotre Hero récupère %d or et les %d potions du monstre !"
-                                  "\nTu possèdes donc %d or et %d potions" L_WHITE,
-                                PremierMonstre.orPossede, PremierMonstre.potions, HeroPrincipal.orPossede, HeroPrincipal.potions);
+                    else
+                    {
+                        printf(L_CYAN "\nNotre Hero récupère %d or et les %d potions du monstre !"
+                                      "\nTu possèdes donc %d or et %d potions" L_WHITE,
+                               PremierMonstre.orPossede, PremierMonstre.potions, HeroPrincipal.orPossede, HeroPrincipal.potions);
                     }
-                 
+
                     boutique(&HeroPrincipal);
                     sauvegarder(HeroPrincipal);
                     printf(L_MAGENTA "\nQue veux tu faire ?\n 1.Combat suivant \n2.Retour au menu\n" L_WHITE);
@@ -216,7 +254,9 @@ int main()
                 {
                     printf("\nTu as pris la fuite !");
                 }
-            } while (continuer == 1);
+            }
+            while (continuer == 1)
+                ;
             break;
 
         case 2: // case pour le deuxième menu des règles du jeu
@@ -239,4 +279,4 @@ int main()
     } while (choix != 3);
 
     return (0);
-}   
+}
