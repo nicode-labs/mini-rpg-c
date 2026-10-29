@@ -16,6 +16,39 @@ void ecrire(char texte[])
         i++;
     }
 }
+void afficherBarre(int pv, int pvMax)
+{
+    if (pv < 0)
+    {
+        pv = 0;
+    }
+    int pleines = pv * 20 / pvMax;
+    int vides = 20 - pleines;
+    int pourcent = pv * 100 / pvMax;
+
+     if(pourcent >= 50 )
+        {
+            printf(L_GREEN);
+        }
+    else if(pourcent >= 25)
+    {
+        printf(L_YELLOW);
+    }
+    else
+    {
+        printf(L_RED);
+    }
+
+    for (int i = 0; i < pleines; i++)
+    {
+            printf("█");
+    }
+    for (int i = 0; i < vides; i++)
+    {
+        printf("░");
+    }
+    printf(L_WHITE); 
+}
 void afficherfiche(struct Personnage perso)
 {
     if (perso.niveau == 0)

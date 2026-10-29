@@ -30,6 +30,7 @@ void attendre(int secondes)
     fflush(stdout);
     sleep(secondes);
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
@@ -143,9 +144,9 @@ int main()
                     attendre(1);
                     if (HeroPrincipal.pv > 0)
                     {
-                        char aencore[200];
-                        snprintf(aencore, 200, HOME "\n%s a encore %dPV", HeroPrincipal.nom, HeroPrincipal.pv);
-                        ecrire(aencore);
+                        printf(HOME"%-10s  ", HeroPrincipal.nom);
+                        afficherBarre(HeroPrincipal.pv, HeroPrincipal.pvMax);
+                        printf(" %d/%d\n", HeroPrincipal.pv, HeroPrincipal.pvMax);
                     }
                     else if (HeroPrincipal.pv <= 0)
                     {
@@ -158,10 +159,9 @@ int main()
                         int rechoisir;
                         do
                         {
-                            rechoisir = 0;
-                            char monstreaencore[200];
-                            snprintf(monstreaencore, 200, L_RED "\n%s a encore %d PV", PremierMonstre.nom, PremierMonstre.pv);
-                            ecrire(monstreaencore);
+                            printf("%-10s  ", PremierMonstre.nom);
+                            afficherBarre(PremierMonstre.pv, PremierMonstre.pvMax);
+                            printf(" %d/%d\n", PremierMonstre.pv, PremierMonstre.pvMax);
                             ecrire(L_BLUE "\n\n Que veux-tu faire ?" L_CYAN "\n\n 1.Attaquer  2.Soigner  3.Fuir  4.Potion\n" L_WHITE);
                             action = lireChoix();
                             while (action < 1 || action > 4)
@@ -240,6 +240,7 @@ int main()
                             char tuapv[200];
                             snprintf(tuapv, 200, "\n%s a encore %dPV", PremierMonstre.nom, PremierMonstre.pv);
                             ecrire(tuapv);
+                            
                         }
                         else if (PremierMonstre.pv <= 0)
                         {
@@ -289,8 +290,9 @@ int main()
             break;
 
         case 2: // case pour le deuxième menu des règles du jeu
-            printf(L_CYAN "Voici les règles du jeu :\n");
-            printf("- Tu incarnes un heros qui affronte des monstres au tour par tour.\n");
+            ecrire(L_CYAN "\n\nVoici les règles du jeu :\n");
+            sleep(1);
+            printf("\n\n- Tu incarnes un heros qui affronte des monstres au tour par tour.\n");
             printf("- A chaque tour, tu choisis : attaquer, te soigner, fuir ou utiliser une potion.\n");
             printf("- Le monstre riposte apres chacune de tes actions.\n");
             printf("- Si les PV du monstre tombent a 0, tu gagnes de l'XP.\n");

@@ -25,6 +25,7 @@ int charger(struct Personnage *heros);
 int lireChoix();
 void attendre(int secondes);
 void ecrire(char texte[]);
+void afficherBarre(int pv, int pvMax);
 
 
 #endif
